@@ -62,12 +62,15 @@ const PetSchema = mongoose.Schema(
       type: String,
       required: false,
     },
+    addedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
   },
   {
     timestamps: true,
   }
 );
-
 
 export const Users = mongoose.model("Users", UserSchema);
 export const Pets = mongoose.model("Pets", PetSchema);

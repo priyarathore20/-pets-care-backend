@@ -1,11 +1,13 @@
 import express from "express";
-import { Pets, Users } from "../models/schema.js";
+import { Pets, Users } from "../../models/schema.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { signupValidation } from "../../validation/auth.validation.js";
+import { JWT_SECRET_KEY } from "../../config.js";
 
-const router = express.Router();
+const authRouter = express.Router();
 
-const secretKey = "your-secret-key";
+const secretKey = JWT_SECRET_KEY;
 
 // Function to generate JWT
 function generateToken(user) {
@@ -22,7 +24,7 @@ const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
 // To get all users
 
-router.get("/", async (request, response) => {
+authRouter.get("/", async (request, response) => {
   try {
     const users = await Users.find({});
     console.log("fetched users");
@@ -37,36 +39,18 @@ router.get("/", async (request, response) => {
 });
 
 // To create a user
+//joi.happy
 
-router.post("/signup", async (req, res) => {
+authRouter.post("/signup", async (req, res) => {
   try {
-    let email = req?.body?.email;
-    let phoneNumber = req?.body?.phoneNumber;
-    let password = req?.body?.password;
-    let name = req?.body?.name;
-    let gender = req?.body?.gender;
+    const { error } = signupValidation(req.body);
 
-    if (!phoneNumberRegex.test(phoneNumber)) {
-      console.log("Valid phone number!");
-      return res.status(400).json({ message: "Invalid phone number" });
+    console.log("<><><><error here><><><><>", JSON.stringify(error, null, 2));
+
+    if (error?.details?.length) {
+      return res.status(400).send({ message: error.message });
     }
-
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: "Invalid email" });
-    }
-
-    if (!gender) {
-      return res.status(400).json({ message: "Enter your gender" });
-    }
-
-    if (!name) {
-      return res.status(400).json({ message: "Enter your name" });
-    }
-
-    if (!password) {
-      return res.status(400).json({ message: "Enter your password" });
-    }
-
+    const { name, email, password, gender, phoneNumber } = req.body;
     const existUser = await Users.findOne({ email: email });
     if (existUser) {
       return res
@@ -75,9 +59,12 @@ router.post("/signup", async (req, res) => {
     }
 
     // Hash the password before storing it in the database
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const salt = await bcrypt.genSalt(10);
+
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     // Create a new user in the database
+    //add salt in db
     const newUser = new Users({
       email,
       phoneNumber,
@@ -97,9 +84,10 @@ router.post("/signup", async (req, res) => {
 
 // To login a user
 
-router.post("/login", async (req, res) => {
+authRouter.post("/login", async (req, res) => {
   try {
     const { password, email } = req?.body ?? {};
+    console.log(password, email);
 
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email" });
@@ -134,7 +122,7 @@ router.post("/login", async (req, res) => {
 
 // To get a user
 
-router.get("/:id", async (request, response) => {
+authRouter.get("/:id", async (request, response) => {
   try {
     const { id } = request.params;
     const user = await Users.findById(id);
@@ -147,7 +135,7 @@ router.get("/:id", async (request, response) => {
 
 // // To edit a user
 
-router.put("/:id", async (request, response) => {
+authRouter.put("/:id", async (request, response) => {
   try {
     if (
       !request.body.name ||
@@ -172,4 +160,6 @@ router.put("/:id", async (request, response) => {
   }
 });
 
-export default router;
+export default authRouter;
+
+// route get('/user');

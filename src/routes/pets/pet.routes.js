@@ -1,5 +1,6 @@
 // const { Pets } = require("../models/schema");
-import { Pets } from "../models/schema.js";
+import { authChecker } from "../../middleware/auth.check.middleware.js";
+import { Pets } from "../../models/schema.js";
 import express from "express";
 
 const petRouter = express.Router();
@@ -8,10 +9,11 @@ const petRouter = express.Router();
 
 // To get all pets //
 
-petRouter.get("/", async (request, response) => {
+petRouter.get("/", authChecker, async (req, response) => {
   try {
+    let userId = req?.user?.id;
     console.log("Inside get all pets");
-    const users = await Pets.find({});
+    const users = await Pets.find({ addedBy: userId });
     console.log("fetched users");
     return response.status(200).json({
       count: users.length,
@@ -25,7 +27,7 @@ petRouter.get("/", async (request, response) => {
 
 // To create a pet
 
-petRouter.post("/add-pet", async (request, response) => {
+petRouter.post("/add-pet", authChecker, async (request, response) => {
   try {
     console.log("Inside add a pets");
     let age = request.body.age;
@@ -36,6 +38,7 @@ petRouter.post("/add-pet", async (request, response) => {
     let description = request.body.description;
     let healthInformation = request.body.healthInformation;
     let species = request.body.species;
+    let addedBy = request?.user?.id;
     if (
       !age ||
       !sex ||
@@ -44,7 +47,8 @@ petRouter.post("/add-pet", async (request, response) => {
       !weight ||
       !name ||
       !description ||
-      !healthInformation
+      !healthInformation ||
+      !addedBy
     ) {
       return response.status(400).send({
         message: "Send all required fields",
@@ -59,6 +63,7 @@ petRouter.post("/add-pet", async (request, response) => {
       breed: breed,
       description: description,
       healthInformation: healthInformation,
+      addedBy: addedBy,
     };
 
     const pet = await Pets.create(newPet);

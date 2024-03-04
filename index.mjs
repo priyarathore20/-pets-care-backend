@@ -1,15 +1,13 @@
-import express from "express";
+import express,{json,urlencoded} from "express";
 import mongoose from "mongoose";
-import { PORT, URL } from "./config.js";
-import router from "./routes/router.js";
+import { PORT, URL } from "./src/config.js";
+import router from "./src/routes/index.js";
 import cors from "cors";
-import petRouter from "./routes/petRoutes.js";
+import helmet from "helmet";
 
 const app = express();
-
-app.use(express.json());
-
-app.use(cors());
+app.use(json());
+app.use(urlencoded({extends:true}));
 
 app.use(
   cors({
@@ -18,15 +16,14 @@ app.use(
     allowedHeaders: ["Content-Type"],
   })
 );
-
-app.use("/pets", petRouter);
-app.use("/", router);
+app.use(helmet());
 
 mongoose
   .connect(URL)
   .then(() => {
     console.log("App connected to database");
     app.listen(PORT, () => {
+      app.use(router);
       console.log("App is listening to port", PORT);
     });
   })
