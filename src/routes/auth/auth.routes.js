@@ -1,51 +1,34 @@
 import express from "express";
-import { Pets, Users } from "../../models/schema.js";
+import { Users } from "../../models/schema.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { signupValidation } from "../../validation/auth.validation.js";
+import {
+  loginValidation,
+  signupValidation,
+} from "../../validation/auth.validation.js";
 import { JWT_SECRET_KEY } from "../../config.js";
 
 const authRouter = express.Router();
 
-const secretKey = JWT_SECRET_KEY;
-
 // Function to generate JWT
 function generateToken(user) {
   const { _id, phoneNumber, email, gender, name } = user;
-  return jwt.sign({ id: _id, phoneNumber, email, gender, name }, secretKey, {
-    expiresIn: "6d",
-  });
+  return jwt.sign(
+    { id: _id, phoneNumber, email, gender, name },
+    JWT_SECRET_KEY,
+    {
+      expiresIn: "6d",
+    }
+  );
 }
 
-const phoneNumberRegex = /^\d{10}$/;
-const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-
-/* User CRU request */
-
-// To get all users
-
-authRouter.get("/", async (request, response) => {
-  try {
-    const users = await Users.find({});
-    console.log("fetched users");
-    return response.status(200).json({
-      count: users.length,
-      data: users,
-    });
-  } catch (error) {
-    console.log("error fetching");
-    response.status(500).send({ message: error.message });
-  }
-});
-
 // To create a user
-//joi.happy
 
 authRouter.post("/signup", async (req, res) => {
   try {
     const { error } = signupValidation(req.body);
 
-    console.log("<><><><error here><><><><>", JSON.stringify(error, null, 2));
+    console.log(JSON.stringify(error, null, 2));
 
     if (error?.details?.length) {
       return res.status(400).send({ message: error.message });
@@ -87,14 +70,12 @@ authRouter.post("/signup", async (req, res) => {
 authRouter.post("/login", async (req, res) => {
   try {
     const { password, email } = req?.body ?? {};
-    console.log(password, email);
+    console.log(JSON.stringify(error, null, 2));
 
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: "Invalid email" });
-    }
+    const { error } = loginValidation(req?.body);
 
-    if (!password) {
-      return res.status(400).json({ message: "Enter your password" });
+    if (error?.details?.length) {
+      return res.status(400).send({ message: error.message });
     }
 
     // Find the user in the database
@@ -117,46 +98,6 @@ authRouter.post("/login", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-// To get a user
-
-authRouter.get("/:id", async (request, response) => {
-  try {
-    const { id } = request.params;
-    const user = await Users.findById(id);
-    return response.status(200).json(user);
-  } catch (error) {
-    console.log(error.message);
-    response.status(500).send({ message: error.message });
-  }
-});
-
-// // To edit a user
-
-authRouter.put("/:id", async (request, response) => {
-  try {
-    if (
-      !request.body.name ||
-      !request.body.email ||
-      !request.body.phoneNumber ||
-      !request.body.gender ||
-      !request.body.password
-    ) {
-      return response.status(400).send({
-        message: "Send all required fields: title, author, publishYear",
-      });
-    }
-    const { id } = request.params;
-    const result = await Users.findByIdAndUpdate(id, request.body);
-    if (!result) {
-      return response.status(404).send({ message: "User not found" });
-    }
-    return response.status(201).send({ message: "User updated successfully" });
-  } catch (error) {
-    console.log(error.message);
-    response.status(500).send({ message: error.message });
   }
 });
 

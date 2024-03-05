@@ -32,7 +32,7 @@ const PetSchema = mongoose.Schema(
   {
     name: {
       type: String,
-      required: false,
+      required: true,
     },
     age: {
       type: String,

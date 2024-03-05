@@ -1,6 +1,8 @@
 import Joi from "joi";
 
-const schema = Joi.object({
+// signup validation schema
+
+const signupSchema = Joi.object({
   email: Joi.string().email().required(),
 
   password: Joi.string().required(),
@@ -9,9 +11,9 @@ const schema = Joi.object({
     .pattern(/^\d{10}$/)
     .required(),
 
-  gender: Joi.string().valid("male", "female").required(),
+  gender: Joi.string().valid("Male", "Female").required().uppercase(),
 
-  name: Joi.string().min(3).max(20).required(),
+  name: Joi.string().min(3).max(20).required().uppercase(),
 
   email: Joi.string().email({
     minDomainSegments: 2,
@@ -20,5 +22,17 @@ const schema = Joi.object({
 });
 
 export const signupValidation = (body) => {
-  return schema.validate(body);
+  return signupSchema.validate(body);
+};
+
+// login validation schema
+
+const loginSchema = Joi.object({
+  email: Joi.string().email().required(),
+
+  password: Joi.string().required(),
+});
+
+export const loginValidation = (body) => {
+  return loginSchema.validate(body);
 };

@@ -2,6 +2,7 @@
 import { authChecker } from "../../middleware/auth.check.middleware.js";
 import { Pets } from "../../models/schema.js";
 import express from "express";
+import { addPetValidation } from "../../validation/pets.validation.js";
 
 const petRouter = express.Router();
 
@@ -30,36 +31,22 @@ petRouter.get("/", authChecker, async (req, response) => {
 petRouter.post("/add-pet", authChecker, async (request, response) => {
   try {
     console.log("Inside add a pets");
-    let age = request.body.age;
-    let name = request.body.name;
-    let sex = request.body.sex;
-    let breed = request.body.breed;
-    let weight = request.body.weight;
-    let description = request.body.description;
-    let healthInformation = request.body.healthInformation;
-    let species = request.body.species;
-    let addedBy = request?.user?.id;
-    if (
-      !age ||
-      !sex ||
-      !breed ||
-      !species ||
-      !weight ||
-      !name ||
-      !description ||
-      !healthInformation ||
-      !addedBy
-    ) {
-      return response.status(400).send({
-        message: "Send all required fields",
-      });
+    const addedBy = request?.user?.id;
+    const { name, age, weight, sex, breed, description, healthInformation } =
+      request?.body ?? {};
+
+    const { error } = addPetValidation(request?.body);
+    console.log(JSON.stringify(error, null, 2));
+
+    if (error?.details?.length) {
+      return response.status(400).send({ message: error.message });
     }
+
     const newPet = {
       name: name,
       age: age,
       weight: weight,
       sex: sex,
-      species: species,
       breed: breed,
       description: description,
       healthInformation: healthInformation,
@@ -78,7 +65,7 @@ petRouter.post("/add-pet", authChecker, async (request, response) => {
 
 // To get a specified pet
 
-petRouter.get("/:id", async (request, response) => {
+petRouter.get("/:id", authChecker, async (request, response) => {
   try {
     console.log("Inside get a pets");
     const { id } = request.params;
@@ -90,26 +77,51 @@ petRouter.get("/:id", async (request, response) => {
   }
 });
 
+// To delete a specified pet
+
+petRouter.delete("/:id", authChecker, async (request, response) => {
+  try {
+    console.log("Inside get a pets");
+    const { id } = request.params;
+    const pet = await Pets.findById(id);
+    if (!pet) {
+      return response.status(404).send({ message: "Pet not found!" });
+    }
+    await pet.deleteOne({ id });
+    return response.status(200).send({ message: "Pet deleted successfully" });
+  } catch (error) {
+    console.log(error.message);
+    response.status(500).send({ message: error.message });
+  }
+});
+
 // To update a pet
 
 petRouter.put("/:id", async (request, response) => {
   try {
     console.log("Inside update a pets");
-    if (
-      !request.body.name ||
-      !request.body.breed ||
-      !request.body.sex ||
-      !request.body.age ||
-      !request.body.weight ||
-      !request.body.healthInformation ||
-      !request.body.description
-    ) {
-      return response.status(400).send({
-        message: "Send all required fields",
-      });
+    console.log("Inside add a pets");
+    const { name, age, weight, sex, breed, description, healthInformation } =
+      request?.body ?? {};
+
+    const { error } = addPetValidation(request?.body);
+    console.log(JSON.stringify(error, null, 2));
+
+    if (error?.details?.length) {
+      return response.status(400).send({ message: error.message });
     }
+
     const { id } = request.params;
-    const result = await Pets.findByIdAndUpdate(id, request.body);
+    const result = await Pets.findByIdAndUpdate(id, {
+      name,
+      age,
+      weight,
+      sex,
+      description,
+      healthInformation,
+      weight,
+      breed,
+    });
     if (!result) {
       return response.status(404).send({ message: "Pet not found" });
     }
