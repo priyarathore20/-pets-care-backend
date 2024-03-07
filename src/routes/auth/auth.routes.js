@@ -70,9 +70,9 @@ authRouter.post("/signup", async (req, res) => {
 authRouter.post("/login", async (req, res) => {
   try {
     const { password, email } = req?.body ?? {};
-    console.log(JSON.stringify(error, null, 2));
 
     const { error } = loginValidation(req?.body);
+    console.log(JSON.stringify(error, null, 2));
 
     if (error?.details?.length) {
       return res.status(400).send({ message: error.message });

@@ -65,7 +65,7 @@ petRouter.post("/add-pet", authChecker, async (request, response) => {
 
 // To get a specified pet
 
-petRouter.get("/:id", authChecker, async (request, response) => {
+petRouter.get("/details/:id", authChecker, async (request, response) => {
   try {
     console.log("Inside get a pets");
     const { id } = request.params;
@@ -79,7 +79,7 @@ petRouter.get("/:id", authChecker, async (request, response) => {
 
 // To delete a specified pet
 
-petRouter.delete("/:id", authChecker, async (request, response) => {
+petRouter.delete("/details/:id", authChecker, async (request, response) => {
   try {
     console.log("Inside get a pets");
     const addedBy = request?.user?.id;
@@ -98,7 +98,7 @@ petRouter.delete("/:id", authChecker, async (request, response) => {
 
 // To update a pet
 
-petRouter.put("/:id",authChecker, async (request, response) => {
+petRouter.put("/details/:id", authChecker, async (request, response) => {
   try {
     console.log("Inside update a pets");
     console.log("Inside add a pets");
