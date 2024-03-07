@@ -82,7 +82,8 @@ petRouter.get("/:id", authChecker, async (request, response) => {
 petRouter.delete("/:id", authChecker, async (request, response) => {
   try {
     console.log("Inside get a pets");
-    const { id } = request.params;
+    const addedBy = request?.user?.id;
+    const { id } = request?.params;
     const pet = await Pets.findById(id);
     if (!pet) {
       return response.status(404).send({ message: "Pet not found!" });
@@ -97,7 +98,7 @@ petRouter.delete("/:id", authChecker, async (request, response) => {
 
 // To update a pet
 
-petRouter.put("/:id", async (request, response) => {
+petRouter.put("/:id",authChecker, async (request, response) => {
   try {
     console.log("Inside update a pets");
     console.log("Inside add a pets");
