@@ -46,11 +46,11 @@ const PetSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    size: {
+    species: {
       type: String,
       required: false,
     },
-    weight: {
+    color: {
       type: String,
       required: false,
     },

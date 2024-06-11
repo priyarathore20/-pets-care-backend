@@ -3,11 +3,10 @@ import Joi from "joi";
 // add pet validation schema
 
 const addPetSchema = Joi.object({
-  weight: Joi.string(),
   breed: Joi.string().required(),
-  size: Joi.string(),
+  species: Joi.string(),
   description: Joi.string().max(250).min(10),
-  size: Joi.string(),
+  color: Joi.string(),
   age: Joi.string().required(),
   sex: Joi.string().valid("Male", "Female").required(),
   healthInformation: Joi.string().max(250).min(3),

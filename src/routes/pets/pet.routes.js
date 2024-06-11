@@ -32,8 +32,16 @@ petRouter.post("/add-pet", authChecker, async (request, response) => {
   try {
     console.log("Inside add a pets");
     const addedBy = request?.user?.id;
-    const { name, age, weight, sex, breed, description, healthInformation } =
-      request?.body ?? {};
+    const {
+      name,
+      age,
+      color,
+      species,
+      sex,
+      breed,
+      description,
+      healthInformation,
+    } = request?.body ?? {};
 
     const { error } = addPetValidation(request?.body);
     console.log(JSON.stringify(error, null, 2));
@@ -45,7 +53,8 @@ petRouter.post("/add-pet", authChecker, async (request, response) => {
     const newPet = {
       name: name,
       age: age,
-      weight: weight,
+      species: species,
+      color: color,
       sex: sex,
       breed: breed,
       description: description,
@@ -79,7 +88,7 @@ petRouter.get("/details/:id", authChecker, async (request, response) => {
 
 // To delete a specified pet
 
-petRouter.delete("/details/:id", authChecker, async (request, response) => {
+petRouter.delete("/delete-pet/:id", authChecker, async (request, response) => {
   try {
     console.log("Inside get a pets");
     const addedBy = request?.user?.id;
@@ -98,7 +107,7 @@ petRouter.delete("/details/:id", authChecker, async (request, response) => {
 
 // To update a pet
 
-petRouter.put("/details/:id", authChecker, async (request, response) => {
+petRouter.put("/edit-pet/:id", authChecker, async (request, response) => {
   try {
     console.log("Inside update a pets");
     console.log("Inside add a pets");
@@ -134,3 +143,5 @@ petRouter.put("/details/:id", authChecker, async (request, response) => {
 });
 
 export default petRouter;
+
+//error state

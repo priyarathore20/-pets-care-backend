@@ -20,6 +20,14 @@ app.use(cors());
 // );
 app.use(helmet());
 
+app.get("/", (req, res) => {
+  try {
+    res.status(200).json({ message: "The page is connected." });
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 mongoose
   .connect(URL)
   .then(() => {
