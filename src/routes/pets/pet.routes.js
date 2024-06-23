@@ -1,7 +1,7 @@
 // const { Pets } = require("../models/schema");
 import { authChecker } from "../../middleware/auth.check.middleware.js";
-import { Pets } from "../../models/schema.js";
-import express from "express";
+import { Pets, Users } from "../../models/schema.js";
+import express, { request, response } from "express";
 import { addPetValidation } from "../../validation/pets.validation.js";
 
 const petRouter = express.Router();
@@ -139,6 +139,36 @@ petRouter.put("/edit-pet/:id", authChecker, async (request, response) => {
   } catch (error) {
     console.log(error.message);
     response.status(500).send({ message: error.message });
+  }
+});
+
+petRouter.get("/get-pet-and-owner-details/:id", async (request, response) => {
+  try {
+    const { id } = request.params;
+
+    const pet = await Pets?.findById("666847eb22140bbcfe517225");
+    if (pet == null) {
+      return response.status(404).json({ message: "Pet not found" });
+    }
+    console.log(pet);
+    const user = await Users?.findById(pet?.addedBy);
+    response.status(200).json({
+      name: pet?.name,
+      age: pet?.age,
+      sex: pet?.sex,
+      breed: pet?.breed,
+      species: pet?.species,
+      color: pet?.color,
+      description: pet?.description,
+      healthInformation: pet?.healthInformation,
+      ownerEmail: user?.email,
+      ownerPhoneNumber: user?.phoneNumber,
+      ownerName: user?.name,
+      ownerGender: user?.gender,
+    });
+  } catch (error) {
+    console.log(error);
+    response.status(500).json({ message: "Internal server error" });
   }
 });
 
