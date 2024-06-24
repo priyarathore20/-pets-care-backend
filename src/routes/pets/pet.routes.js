@@ -146,7 +146,7 @@ petRouter.get("/get-pet-and-owner-details/:id", async (request, response) => {
   try {
     const { id } = request.params;
 
-    const pet = await Pets?.findById("666847eb22140bbcfe517225");
+    const pet = await Pets?.findById(id);
     if (pet == null) {
       return response.status(404).json({ message: "Pet not found" });
     }

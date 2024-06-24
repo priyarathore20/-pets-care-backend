@@ -4,7 +4,7 @@ import Joi from "joi";
 
 const addPetSchema = Joi.object({
   breed: Joi.string().required(),
-  species: Joi.string(),
+  // species: Joi.string(),
   description: Joi.string().max(250).min(10),
   color: Joi.string(),
   age: Joi.string().required(),
