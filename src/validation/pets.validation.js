@@ -8,7 +8,7 @@ const addPetSchema = Joi.object({
   description: Joi.string().max(250).min(10),
   color: Joi.string(),
   age: Joi.string().required(),
-  sex: Joi.string().valid("Male", "Female").required(),
+  sex: Joi.string().required(),
   healthInformation: Joi.string().max(250).min(3),
   name: Joi.string().min(3).max(20).required().uppercase(),
 });
