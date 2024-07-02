@@ -1,9 +1,13 @@
-import Joi from "joi";
+const Joi = require("joi");
 
 // signup validation schema
-
 const signupSchema = Joi.object({
-  email: Joi.string().email().required(),
+  email: Joi.string()
+    .email({
+      minDomainSegments: 2,
+      tlds: { allow: ["com", "net"] },
+    })
+    .required(),
 
   password: Joi.string().required(),
 
@@ -14,25 +18,21 @@ const signupSchema = Joi.object({
   gender: Joi.string().valid("Male", "Female").required(),
 
   name: Joi.string().min(3).max(20).required(),
-
-  email: Joi.string().email({
-    minDomainSegments: 2,
-    tlds: { allow: ["com", "net"] },
-  }),
 });
 
-export const signupValidation = (body) => {
+const signupValidation = (body) => {
   return signupSchema.validate(body);
 };
 
 // login validation schema
-
 const loginSchema = Joi.object({
   email: Joi.string().email().required(),
 
   password: Joi.string().required(),
 });
 
-export const loginValidation = (body) => {
+const loginValidation = (body) => {
   return loginSchema.validate(body);
 };
+
+module.exports = { signupValidation, loginValidation };

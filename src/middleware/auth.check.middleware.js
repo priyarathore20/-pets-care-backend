@@ -1,7 +1,7 @@
-import jwt from "jsonwebtoken";
-import { JWT_SECRET_KEY } from "../config.js";
+const jwt = require("jsonwebtoken");
+const { JWT_SECRET_KEY } = require("../config");
 
-export const authChecker = async (req, res, next) => {
+const authChecker = async (req, res, next) => {
   const token = req?.headers?.authorization?.replace("Bearer ", "");
   console.log(token);
 
@@ -19,3 +19,5 @@ export const authChecker = async (req, res, next) => {
     next();
   });
 };
+
+module.exports = authChecker;

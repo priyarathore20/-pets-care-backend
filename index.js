@@ -1,13 +1,14 @@
-import express, { json, urlencoded } from "express";
-import mongoose from "mongoose";
-import { PORT, URL } from "./src/config.js";
-import router from "./src/routes/index.js";
-import cors from "cors";
-import helmet from "helmet";
+const express = require("express");
+const { json, urlencoded } = require("express");
+const mongoose = require("mongoose");
+const { PORT, URL } = require("./src/config");
+const router = require("./src/routes/index");
+const cors = require("cors");
+const helmet = require("helmet");
 
 const app = express();
 app.use(json());
-app.use(urlencoded({ extends: true }));
+app.use(urlencoded({ extended: true }));
 
 app.use(cors());
 

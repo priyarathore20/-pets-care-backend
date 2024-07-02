@@ -1,7 +1,12 @@
-import Joi from "joi";
+const Joi = require("joi");
 
 const schema = Joi.object({
-  email: Joi.string().email().required(),
+  email: Joi.string()
+    .email({
+      minDomainSegments: 2,
+      tlds: { allow: ["com", "net"] },
+    })
+    .required(),
 
   phoneNumber: Joi.string()
     .pattern(/^\d{10}$/)
@@ -10,13 +15,10 @@ const schema = Joi.object({
   gender: Joi.string().valid("Male", "Female").required().uppercase(),
 
   name: Joi.string().min(3).max(20).required().uppercase(),
-
-  email: Joi.string().email({
-    minDomainSegments: 2,
-    tlds: { allow: ["com", "net"] },
-  }),
 });
 
-export const editUserValidation = (body) => {
+const editUserValidation = (body) => {
   return schema.validate(body);
 };
+
+module.exports = { editUserValidation };

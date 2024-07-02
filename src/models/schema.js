@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
-const UserSchema = mongoose.Schema(
+const UserSchema = new mongoose.Schema(
   {
     email: {
       type: String,
@@ -28,7 +28,7 @@ const UserSchema = mongoose.Schema(
   }
 );
 
-const PetSchema = mongoose.Schema(
+const PetSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -72,5 +72,10 @@ const PetSchema = mongoose.Schema(
   }
 );
 
-export const Users = mongoose.model("Users", UserSchema);
-export const Pets = mongoose.model("Pets", PetSchema);
+const Users = mongoose.model("Users", UserSchema);
+const Pets = mongoose.model("Pets", PetSchema);
+
+module.exports = {
+  Users,
+  Pets
+};

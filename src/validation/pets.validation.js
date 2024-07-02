@@ -1,7 +1,6 @@
-import Joi from "joi";
+const Joi = require("joi");
 
 // add pet validation schema
-
 const addPetSchema = Joi.object({
   breed: Joi.string().required(),
   species: Joi.string().required(),
@@ -13,6 +12,8 @@ const addPetSchema = Joi.object({
   name: Joi.string().min(3).max(20).required().uppercase(),
 });
 
-export const addPetValidation = (body) => {
+const addPetValidation = (body) => {
   return addPetSchema.validate(body);
 };
+
+module.exports = { addPetValidation };

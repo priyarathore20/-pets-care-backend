@@ -1,12 +1,12 @@
-import {Router} from 'express';
-import petRouter from './pets/pet.routes.js';
-import authRouter from './auth/auth.routes.js';
-import userRouter from './user/user.routes.js'
+const express = require('express');
+const petRouter = require('./pets/pet.routes');
+const authRouter = require('./auth/auth.routes');
+const userRouter = require('./user/user.routes');
 
-const router= Router();
+const router = express.Router();
 
-router.use('/user',userRouter);
-router.use('/pets',petRouter);
-router.use('/auth',authRouter);
+router.use('/user', userRouter);
+router.use('/pets', petRouter);
+router.use('/auth', authRouter);
 
-export default router;
+module.exports = router;

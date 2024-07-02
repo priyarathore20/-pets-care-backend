@@ -1,36 +1,28 @@
-import express from "express";
-import { editUserValidation } from "../../validation/edit.user.validation.js";
+const express = require('express');
+const { Users } = require('../../models/schema');
+const { editUserValidation } = require('../../validation/edit.user.validation');
 
 const userRouter = express.Router();
 
-// // To edit a user
-
-userRouter.put("/:id", async (request, response) => {
+// To edit a user
+userRouter.put('/:id', async (req, res) => {
   try {
-    const { email, phoneNumber, name, gender } = request?.body;
-    const { error } = editUserValidation(request?.body);
+    const { email, phoneNumber, name, gender } = req.body;
+    const { error } = editUserValidation(req.body);
 
-    console.log(JSON.stringify(error, null, 2));
-
-    if (error?.details?.length) {
+    if (error.details.length) {
       return res.status(400).send({ message: error.message });
     }
 
-    const { id } = request.params;
-    const result = await Users.findByIdAndUpdate(id, {
-      email,
-      phoneNumber,
-      gender,
-      name,
-    });
+    const { id } = req.params;
+    const result = await Users.findByIdAndUpdate(id, { email, phoneNumber, gender, name });
     if (!result) {
-      return response.status(404).send({ message: "User not found" });
+      return res.status(404).send({ message: 'User not found' });
     }
-    return response.status(201).send({ message: "User updated successfully" });
+    res.status(200).send({ message: 'User updated successfully' });
   } catch (error) {
-    console.log(error.message);
-    response.status(500).send({ message: error.message });
+    res.status(500).send({ message: error.message });
   }
 });
 
-export default userRouter;
+module.exports = userRouter;
