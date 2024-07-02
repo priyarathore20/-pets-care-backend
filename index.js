@@ -26,6 +26,8 @@ app.get("/", (req, res) => {
   }
 });
 
+app.use(router);
+
 mongoose
   .connect(URL)
   .then(() => {
@@ -33,10 +35,9 @@ mongoose
 
     if (PORT) {
       app.listen(PORT, () => {
-        app.use(router);
         console.log("app is listening to port ", PORT);
       });
-    } else app.use(router);
+    }
   })
   .catch((error) => {
     console.log(error);
