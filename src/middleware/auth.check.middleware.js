@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
-import { JWT_SECRET_KEY } from "../config.js";
+
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 export const authChecker = async (req, res, next) => {
   const token = req?.headers?.authorization?.replace("Bearer ", "");

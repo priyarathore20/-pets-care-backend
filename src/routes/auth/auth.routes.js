@@ -6,7 +6,8 @@ import {
   loginValidation,
   signupValidation,
 } from "../../validation/auth.validation.js";
-import { JWT_SECRET_KEY } from "../../config.js";
+
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 const authRouter = express.Router();
 

@@ -1,9 +1,14 @@
-import cors from 'cors';
-import express, { json, urlencoded } from 'express';
-import helmet from 'helmet';
-import mongoose from 'mongoose';
-import { URL } from './src/config.js';
-import router from './src/routes/index.js';
+import cors from "cors";
+import express, { json, urlencoded } from "express";
+import helmet from "helmet";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import router from "./src/routes/index.js";
+
+dotenv.config();
+
+const URL = process.env.URL;
+const PORT = process.env.PORT || 8000;
 
 const app = express();
 app.use(json());
@@ -13,19 +18,25 @@ app.use(cors());
 
 app.use(helmet());
 
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   try {
-    res.status(200).json({ message: 'The page is connected.' });
+    res.status(200).json({ message: "The page is connected." });
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(500).send("Internal Server Error");
   }
 });
 
 mongoose
   .connect(URL)
   .then(() => {
-    console.log('App connected to database');
-    app.use(router);
+    console.log("App connected to database");
+
+    if (PORT) {
+      app.listen(PORT, () => {
+        app.use(router);
+        console.log("app is listening to port ", PORT);
+      });
+    } else app.use(router);
   })
   .catch((error) => {
     console.log(error);
