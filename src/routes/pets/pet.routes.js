@@ -111,7 +111,7 @@ petRouter.put("/edit-pet/:id", authChecker, async (request, response) => {
   try {
     console.log("Inside update a pets");
     console.log("Inside add a pets");
-    const { name, age, weight, sex, breed, description, healthInformation } =
+    const { name, age, breed, description, healthInformation } =
       request?.body ?? {};
 
     const { error } = addPetValidation(request?.body);
@@ -126,7 +126,6 @@ petRouter.put("/edit-pet/:id", authChecker, async (request, response) => {
       name,
       age,
       weight,
-      sex,
       description,
       healthInformation,
       weight,
